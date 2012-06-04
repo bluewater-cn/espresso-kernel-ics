@@ -296,13 +296,23 @@ static int msm_pmem_frame_ptov_lookup(struct msm_sync *sync,
 	hlist_for_each_entry_safe(region, node, n, &sync->pmem_frames, list) {
 		if (pyaddr == (region->paddr + region->info.y_off) &&
 #ifndef CONFIG_ARCH_MSM7225
+#ifndef CONFIG_ARCH_MSM7227
 				pcbcraddr == (region->paddr +
 						region->info.cbcr_off) &&
 #endif
+#endif
+
 				region->info.vfe_can_write) {
 			*pmem_region = region;
 			region->info.vfe_can_write = !take_from_vfe;
 #ifdef CONFIG_ARCH_MSM7225
+			if (pcbcraddr != (region->paddr + region->info.cbcr_off)) {
+				pr_err("[CAM]%s cbcr addr = %lx, NOT EQUAL to region->paddr + region->info.cbcr_off = %lx\n",
+					__func__, pcbcraddr, region->paddr + region->info.cbcr_off);
+			}
+#endif
+
+#ifdef CONFIG_ARCH_MSM7227
 			if (pcbcraddr != (region->paddr + region->info.cbcr_off)) {
 				pr_err("[CAM]%s cbcr addr = %lx, NOT EQUAL to region->paddr + region->info.cbcr_off = %lx\n",
 					__func__, pcbcraddr, region->paddr + region->info.cbcr_off);

@@ -98,7 +98,7 @@ static const unsigned short latte_keymap_x0[ARRAY_SIZE(latte_col_gpios) *
 	[KEYMAP_INDEX(5, 2)] = KEY_BACKSPACE,
 	[KEYMAP_INDEX(5, 3)] = KEY_N,
 	[KEYMAP_INDEX(5, 4)] = KEY_F14, /* SYM */
-	[KEYMAP_INDEX(5, 5)] = BTN_MOUSE, /* OJ-action */
+	[KEYMAP_INDEX(5, 5)] = KEY_F23, /* OJ-action */
 	[KEYMAP_INDEX(5, 6)] = KEY_F17,
 
 	[KEYMAP_INDEX(6, 0)] = KEY_U,
@@ -165,7 +165,7 @@ static const unsigned short latte_keymap_x1[ARRAY_SIZE(latte_col_gpios) *
 	[KEYMAP_INDEX(5, 2)] = KEY_F,
 	[KEYMAP_INDEX(5, 3)] = KEY_N,
 	[KEYMAP_INDEX(5, 4)] = KEY_F16, /* BACK */
-	[KEYMAP_INDEX(5, 5)] = BTN_MOUSE, /* OJ-action */
+	[KEYMAP_INDEX(5, 5)] = KEY_F23, /* OJ-action */
 	[KEYMAP_INDEX(5, 6)] = KEY_F17,
 
 	[KEYMAP_INDEX(6, 0)] = KEY_A,
@@ -322,7 +322,7 @@ static struct keyreset_platform_data latte_reset_keys_pdata = {
 	.keys_down = {
 		KEY_POWER,
 		KEY_VOLUMEDOWN,
-		BTN_MOUSE,
+		KEY_F23,
 		0
 	},
 };

@@ -182,18 +182,17 @@ static unsigned long max_axi_rate;
 #ifdef CONFIG_CPU_FREQ
 static struct cpufreq_frequency_table *freq_table;
 static struct cpufreq_frequency_table msm7227_freq_table[] = {
-	{ 0, 120000 },
-	{ 1, 122880 },
-	{ 2, 200000 },
-	{ 3, 245760 },
-	{ 4, 320000 },
-	{ 5, 400000 },
-	{ 6, 480000 },
-	{ 7, 600000 },
-	{ 8, 768000 },
-	{ 9, 787200 },
-	{ 10, 806400 },
-	{ 11, CPUFREQ_TABLE_END },
+	{ 0, 122880 },
+	{ 1, 200000 },
+	{ 2, 245760 },
+	{ 3, 320000 },
+	{ 4, 400000 },
+	{ 5, 480000 },
+	{ 6, 600000 },
+	{ 7, 768000 },
+	{ 8, 787200 },
+	{ 9, 806400 },
+	{ 10, CPUFREQ_TABLE_END },
 };
 static struct cpufreq_frequency_table msm72xx_freq_table[] = {
 #if defined(CONFIG_TURBO_MODE)

@@ -117,8 +117,8 @@ static int upload_ls_table(struct microp_ls_info *li)
 static int get_ls_adc_level(uint8_t *data)
 {
 	struct microp_ls_info *li = ls_info;
-	uint8_t i, adc_level = 0;
-	uint16_t adc_value = 0;
+	uint8_t adc_level = 0;
+	uint16_t adc_value = 0, cali_value;
 
 	data[0] = 0x00;
 	data[1] = li->ls_config->channel;
@@ -137,18 +137,12 @@ static int get_ls_adc_level(uint8_t *data)
 				adc_value = 0x3FF;
 			data[0] = adc_value >> 8;
 			data[1] = adc_value & 0xFF;
+			cali_value = adc_value >> 7;
 		}
-		for (i = 0; i < 10; i++) {
-			if (adc_value <=
-				li->ls_config->levels[i]) {
-				adc_level = i;
-				if (li->ls_config->levels[i])
-					break;
-			}
 		}
 		ILS("ALS value: 0x%X, level: %d #\n",
-				adc_value, adc_level);
-		data[2] = adc_level;
+				cali_value, adc_level);
+		data[2] = cali_value;
 	}
 
 	return 0;
@@ -526,7 +520,7 @@ static int lightsensor_probe(struct platform_device *pdev)
 	}
 	li->ls_input_dev->name = "lightsensor-level";
 	set_bit(EV_ABS, li->ls_input_dev->evbit);
-	input_set_abs_params(li->ls_input_dev, ABS_MISC, 0, 9, 0, 0);
+	input_set_abs_params(li->ls_input_dev, ABS_MISC, 0, 0xffff, 0, 0);
 
 	ret = input_register_device(li->ls_input_dev);
 	if (ret < 0) {

@@ -122,27 +122,18 @@ static int get_ls_adc_level(uint8_t *data)
 
 	data[0] = 0x00;
 	data[1] = li->ls_config->channel;
+
 	if (microp_read_adc(data))
 		return -1;
 
-	adc_value = data[0]<<8 | data[1];
-	if (adc_value > 0x3FF) {
-		printk(KERN_WARNING "%s: get wrong value: 0x%X\n",
-			__func__, adc_value);
-		return -1;
-	} else {
-		if (!li->als_calibrating) {
-			adc_value = adc_value * li->als_gadc / li->als_kadc;
-			if (adc_value > 0x3FF)
-				adc_value = 0x3FF;
-			data[0] = adc_value >> 8;
-			data[1] = adc_value & 0xFF;
-			cali_value = adc_value >> 7;
-		}
-		ILS("ALS value: 0x%X, level: %d #\n",
+	adc_value = data[0]<<8;
+	adc_value = adc_value * li->als_gadc / li->als_kadc;
+	data[0] = adc_value >> 8;
+	data[1] = adc_value & 0xFF;
+	cali_value = adc_value >> 7;
+	ILS("ALS value: 0x%X, level: %d #\n",
 				cali_value, adc_level);
-		data[2] = cali_value;
-	}
+	data[2] = cali_value;
 
 	return 0;
 }

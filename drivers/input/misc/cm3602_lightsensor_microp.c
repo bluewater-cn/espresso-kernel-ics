@@ -118,7 +118,7 @@ static int get_ls_adc_level(uint8_t *data)
 {
 	struct microp_ls_info *li = ls_info;
 	uint8_t adc_level = 0;
-	uint16_t adc_value = 0, cali_value;
+	uint16_t adc_value = 0, cali_value = 0;
 
 	data[0] = 0x00;
 	data[1] = li->ls_config->channel;

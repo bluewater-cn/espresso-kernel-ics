@@ -131,6 +131,7 @@ static int get_ls_adc_level(uint8_t *data)
 	data[0] = adc_value >> 8;
 	data[1] = adc_value & 0xFF;
 	cali_value = adc_value >> 7;
+	cali_value = cali_value > 50 ? cali_value : 50
 	ILS("ALS value: 0x%X, level: %d #\n",
 				cali_value, adc_level);
 	data[2] = cali_value;

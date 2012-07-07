@@ -117,24 +117,39 @@ static int upload_ls_table(struct microp_ls_info *li)
 static int get_ls_adc_level(uint8_t *data)
 {
 	struct microp_ls_info *li = ls_info;
-	uint8_t adc_level = 0;
-	uint16_t adc_value = 0, cali_value = 0;
+	uint8_t i, adc_level = 0;
+	uint16_t adc_value = 0;
 
 	data[0] = 0x00;
 	data[1] = li->ls_config->channel;
-
 	if (microp_read_adc(data))
 		return -1;
 
-	adc_value = data[0]<<8;
-	adc_value = adc_value * li->als_gadc / li->als_kadc;
-	data[0] = adc_value >> 8;
-	data[1] = adc_value & 0xFF;
-	cali_value = adc_value >> 7;
-	cali_value = cali_value > 50 ? cali_value : 50;
-	ILS("ALS value: 0x%X, level: %d #\n",
-				cali_value, adc_level);
-	data[2] = cali_value;
+	adc_value = data[0]<<8 | data[1];
+	if (adc_value > 0x3FF) {
+		printk(KERN_WARNING "%s: get wrong value: 0x%X\n",
+			__func__, adc_value);
+		return -1;
+	} else {
+		if (!li->als_calibrating) {
+			adc_value = adc_value * li->als_gadc / li->als_kadc;
+			if (adc_value > 0x3FF)
+				adc_value = 0x3FF;
+			data[0] = adc_value >> 8;
+			data[1] = adc_value & 0xFF;
+		}
+		for (i = 0; i < 10; i++) {
+			if (adc_value <=
+				li->ls_config->levels[i]) {
+				adc_level = i;
+				if (li->ls_config->levels[i])
+					break;
+			}
+		}
+		ILS("ALS value: 0x%X, level: %d #\n",
+				adc_value, adc_level);
+		data[2] = adc_level;
+	}
 
 	return 0;
 }
@@ -511,7 +526,7 @@ static int lightsensor_probe(struct platform_device *pdev)
 	}
 	li->ls_input_dev->name = "lightsensor-level";
 	set_bit(EV_ABS, li->ls_input_dev->evbit);
-	input_set_abs_params(li->ls_input_dev, ABS_MISC, 0, 0xffff, 0, 0);
+	input_set_abs_params(li->ls_input_dev, ABS_MISC, 0, 9, 0, 0);
 
 	ret = input_register_device(li->ls_input_dev);
 	if (ret < 0) {
